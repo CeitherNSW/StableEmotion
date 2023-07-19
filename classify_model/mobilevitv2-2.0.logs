@@ -1,0 +1,30 @@
+Training loss for epoch 0: 1.5564
+Validation loss for epoch 0: 1.6223
+Validation (Ema) loss for epoch 0: 1.5934
+Training loss for epoch 1: 1.5377
+Validation loss for epoch 1: 1.6263
+Validation (Ema) loss for epoch 1: 1.5912
+Training loss for epoch 2: 1.5265
+Validation loss for epoch 2: 1.6292
+Validation (Ema) loss for epoch 2: 1.5942
+Training loss for epoch 3: 1.5185
+Validation loss for epoch 3: 1.6297
+Validation (Ema) loss for epoch 3: 1.5998
+Training loss for epoch 4: 1.5117
+Validation loss for epoch 4: 1.6424
+Validation (Ema) loss for epoch 4: 1.6058
+Training loss for epoch 5: 1.5052
+Validation loss for epoch 5: 1.6479
+Validation (Ema) loss for epoch 5: 1.6119
+Training loss for epoch 6: 1.5033
+Validation loss for epoch 6: 1.6513
+Validation (Ema) loss for epoch 6: 1.6173
+Training loss for epoch 7: 1.4972
+Validation loss for epoch 7: 1.6508
+Validation (Ema) loss for epoch 7: 1.6212
+Training loss for epoch 8: 1.4947
+Validation loss for epoch 8: 1.6518
+Validation (Ema) loss for epoch 8: 1.6251
+Training loss for epoch 9: 1.4892
+Validation loss for epoch 9: 1.6656
+Validation (Ema) loss for epoch 9: 1.6288

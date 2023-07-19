@@ -1,0 +1,4 @@
+coco-ssd-mobilevitv2-2.0.pt, filter=lfs diff=lfs merge=lfs -text
+coco-ssd-resnet-50.pt, filter=lfs diff=lfs merge=lfs -text
+mobilevitv2-2.0.pt, filter=lfs diff=lfs merge=lfs -text
+deeplabv3-mobilevitv2-2.0.pt filter=lfs diff=lfs merge=lfs -text
