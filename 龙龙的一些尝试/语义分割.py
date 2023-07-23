@@ -1,4 +1,6 @@
-#%%
+# %%
+from typing import LiteralString
+
 import cv2
 import os
 import json
@@ -10,8 +12,9 @@ from torchvision.models.segmentation import deeplabv3_resnet50
 from torch.nn import CrossEntropyLoss
 from torch.optim import Adam
 import numpy as np
+from tqdm import tqdm
 
-#%%
+# %%
 folder_path = '../9517proj_sources/train'
 annotation_path = '../9517proj_sources/train_annotations'
 
@@ -34,10 +37,12 @@ for anno in annotations:
 
     # draw bounding box
     x, y, width, height = bbox
-    cv2.rectangle(image, (int(x), int(y)), (int(x+width), int(y+height)), (0, 255, 0), 2)
+    cv2.rectangle(image, (int(x), int(y)), (int(x + width), int(y + height)), (0, 255, 0), 2)
 
     # show image
-#%%
+
+
+# %%
 class CustomDataset(Dataset):
     def __init__(self, img_folder, img_ext, mask_folder, mask_ext, transform=None):
         self.img_folder = img_folder
@@ -46,6 +51,7 @@ class CustomDataset(Dataset):
         self.mask_ext = mask_ext
         self.transform = transform
         self.filenames = [os.path.splitext(filename)[0] for filename in os.listdir(img_folder)]
+
     def __len__(self):
         return len(self.filenames)
 
@@ -63,8 +69,9 @@ class CustomDataset(Dataset):
 
         return image, mask
 
+
 transform = transforms.Compose([
-    transforms.Resize((32, 32)),
+    transforms.Resize((640, 640)),
     transforms.ToTensor()
 ])
 
@@ -72,7 +79,7 @@ path_folder = '../9517proj_sources/train'
 
 path_folder_2 = '../9517proj_sources/off'
 
-train_dataset = CustomDataset(path_folder,'.jpg',path_folder_2, '.png',transform=transform)
+train_dataset = CustomDataset(path_folder, '.jpg', path_folder_2, '.png', transform=transform)
 train_loader = DataLoader(train_dataset, batch_size=4, shuffle=True)
 
 # create model
@@ -103,31 +110,45 @@ for epoch in range(10):  # suppose we train for 10 epochs
     except Exception as e:
         print(e)
         continue
-#%%
+# %%
 
-#%%
+# %%
 torch.save(model.state_dict(), 'model_weights.pth')
-#%%
-test_loader = DataLoader(train_dataset, batch_size=1, shuffle=False)
-model.eval()
-output_folder = []
-os.makedirs('output', exist_ok=True)
+# %%
+# model.eval()
+test_folder: LiteralString = '../9517proj_sources/valid/valid'
+test_ext = '.jpg'
+os.makedirs('output_folder', exist_ok=True)
+output_folder = '../9517proj_sources/output_folder'
 
-# 检查是否有可用的 GPU
-if torch.cuda.is_available():
-    device = torch.device('cuda')  # 使用 GPU
-else:
-    device = torch.device('cpu')   # 使用 CPU
+test_filenames = [os.path.splitext(filename)[0] for filename in os.listdir(test_folder)]
 
+with torch.no_grad():  # we don't need gradients for testing
+    for filename in test_filenames:
+        img_path = os.path.join(test_folder, filename + test_ext)
+        image = Image.open(img_path).convert('RGB')
+        orig_size = (image.width, image.height)
+        image = transform(image)  # apply the same transform as during training
+        image = image.unsqueeze(0)  # add a batch dimension
 
-with torch.no_grad():
-    for i, (images) in enumerate(test_loader):  # 如果测试集没有标签，则不需要 '_'
-        # images_tensor = torch.stack([torch.from_numpy(i) for i in images])
-        outputs = model(images.to(device))
-        _, predicted = torch.max(outputs.data, 1)  # 获取预测的最大概率类别
+        image = image.to('cuda') if torch.cuda.is_available() else image
 
-        # 将结果转换回 PIL 图像
-        img = transforms.ToPILImage()(predicted.squeeze().cpu())
+        output = model(image)['out']
+        output = torch.argmax(output, dim=1)  # get the most likely prediction
 
-        # 保存图像
-        img.save(os.path.join(output_folder, f'image_{i}.png'))
+        # resize the output to match the original image size
+        output = cv2.resize(output[0].cpu().numpy(), orig_size, interpolation=cv2.INTER_NEAREST)
+        # print(np.unique(output))
+        # print(output)
+        # get the original image
+        orig_img = cv2.imread(img_path)
+
+        # apply the mask to the original image
+        segmented_img = np.zeros_like(orig_img)
+        for i in range(3):  # for each color channel
+            segmented_img[:, :, i] = np.where(output == 1, orig_img[:, :, i], 0)
+        # print(np.unique(segmented_img))
+        # save the segmented image
+        # segmented_img = (segmented_img * 255).astype(np.uint8)
+        res = cv2.imwrite(filename + '_segmented.jpg', segmented_img)
+        print(res)
