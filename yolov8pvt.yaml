@@ -1,0 +1,9 @@
+path: ../datasets/coco128  # dataset root dir
+train: images/train0000  # train images (relative to 'path') 128 images
+val: images/train0000  # val images (relative to 'path') 128 images
+test:  ../9517proj_sources/valid/valid # test images (optional)
+
+# Classes
+names:
+  1: penguin
+  2: turtle
