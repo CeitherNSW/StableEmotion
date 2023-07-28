@@ -1,0 +1,13 @@
+names:
+- penguins
+- turtle
+nc: 2
+roboflow:
+  license: CC BY 4.0
+  project: stableemotion
+  url: https://universe.roboflow.com/stableemotion/stableemotion/dataset/2
+  version: 2
+  workspace: stableemotion
+test: ../test/images
+train: StableEmotion-2/train/images
+val: StableEmotion-2/valid/images
