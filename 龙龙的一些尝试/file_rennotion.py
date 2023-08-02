@@ -19,8 +19,8 @@ def function(annotation_path):
         id = anno['id']
         bbox = anno['bbox']
         x_min, y_min, width, height = bbox
-        x_center = (x_min + width) / 2 / 640
-        y_center = (y_min + height) / 2 / 640
+        x_center = (x_min + width / 2) / 640
+        y_center = (y_min + height / 2) / 640
         width = width / 640
         height = height / 640
         ans[id] = [x_center, y_center, width, height]
