@@ -18,3 +18,6 @@
     * 具体样式参考
     ``<class-index> <x1> <y1> <x2> <y2> ... <xn> <yn>``
     其中x1,y1,x2,y2...xn,yn为``annotations.segmentation``中的各个元素除以640后的float值。
+
+    *filerenotion* 是数据预处理的python代码
+    *output*后缀的txt文件是处理结果
